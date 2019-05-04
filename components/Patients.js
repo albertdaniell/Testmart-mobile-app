@@ -1,0 +1,196 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow
+ */
+
+import React, {Component} from 'react';
+import {Platform, StyleSheet, Text, View, FlatList,Image,ActivityIndicator} from 'react-native';
+import {NavigationActions} from 'react-navigation';
+import {
+    Container,
+    Header,
+    Title,
+    Content,
+    Form,
+    Item,
+    Label,
+    Footer,
+    FooterTab,
+    Button,
+    Left,
+    Right,
+    Body,
+    Icon,
+
+    Tabs,
+    Tab,
+    TabHeading,
+    List,
+    ListItem,
+    Input,
+    Grid,
+    Col
+} from 'native-base';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import firebase from './Firebase';
+
+var db = firebase.firestore()
+
+type Props = {};
+export default class MainPage2 extends Component < Props > {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            patients: [],
+            isLoading:true
+        }
+    }
+
+    componentDidMount() {
+
+        this.getAllPatients()
+    }
+
+    func = () => {
+        alert(0)
+    }
+
+    getAllPatients = () => {
+
+        const patients = [];
+
+        var ref = db.collection("patients")
+
+        getPatientsRef = ref
+            .get()
+            .then(querySnapshot => {
+
+                querySnapshot.forEach(doc => {
+
+                    // alert(doc.data().age) this.setState({     patients:doc.data() })
+                    const {fullname, phone, age, private_sector, gender} = doc.data();
+                    //     // alert(doc.data())    // alert(0)
+                    patients.push({
+                        key: doc.id,
+                        doc,
+                        fullname,
+                        phone,
+                        age,
+                        gender,
+                        private_sector
+
+                    })
+
+                    //alert("heheh")
+                    //    alert(0)
+
+                    this.setState({patients, isLoading:false})
+
+                })
+
+            })
+            .catch(error => {})
+    }
+
+    pull=()=>{
+        this.getAllPatients()
+    }
+    render() {
+        return (
+            <View style={styles.container}>
+                <View style={styles.floatView}>
+                    <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('AddPatient')}
+                        style={{
+                        alignItems: 'center',
+                        width: '100%',
+                        zIndex: 2
+                    }}>
+                        <Text
+                            style={{
+                            color: '#fff',
+                            letterSpacing: 2,
+                            fontSize: 18
+                        }}>Add</Text>
+                    </TouchableOpacity>
+                </View>
+                {/* {
+                   this.state.isLoading?
+               <View style={{flex:1,justifyContent:'center',alignItems:'center',heigh:'100%'}}>
+              
+                   <ActivityIndicator size="large" color="#0000ff" />
+                   </View>
+                   :null
+              
+              
+            } */}
+
+
+                <FlatList
+                onRefresh={this.pull}
+                refreshing={this.state.isLoading}
+                    data={this.state.patients}
+                    renderItem={({item}) => <ListItem avatar>
+                    <Left>
+                    <Image style={{width:50,height:40}} source={require('../android/app/src/main/assets/images/patient.png')}></Image>
+
+                    </Left>
+                    <Body>
+                        <TouchableOpacity >
+                            <Text
+                                style={{
+                                marginBottom: 5,
+                                padding:2
+                            }}>{item.fullname}</Text>
+                        </TouchableOpacity>
+                    </Body>
+                    <Right>
+                        <Icon name="arrow-forward"/>
+                    </Right>
+                </ListItem>}
+               
+                />
+
+            </View>
+        );
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+        marginTop: 5,
+        backgroundColor: '#F5FCFF'
+    },
+
+    floatView: {
+        zIndex: 1,
+        position: 'absolute',
+        bottom: 30,
+        backgroundColor: 'rgba(65, 112, 244,.9)',
+        padding: 10,
+        width: 80,
+        height: 80,
+        right: 10,
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center',
+        borderRadius: 100
+    },
+    welcome: {
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10
+    },
+    instructions: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5
+    }
+});
