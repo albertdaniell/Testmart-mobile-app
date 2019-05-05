@@ -29,6 +29,9 @@ export default class AddPatient extends Component < Props > {
 
     constructor(props) {
         super(props);
+        console.ignoredYellowBox = [
+            'Setting a timer'
+            ];
         this.state = {
             gender: undefined,
             age: '',
@@ -36,8 +39,64 @@ export default class AddPatient extends Component < Props > {
             idnumber: '',
             phone: '',
             private_sector: '',
-            fullname: ''
+            fullname: '',
+            useremail: ''
         };
+    }
+
+    componentDidMount() {
+        setTimeout(() => {
+            this.getCurrentUser()
+        }, 1000)
+    }
+
+    getCurrentUser = () => {
+        firebase
+            .auth()
+            .onAuthStateChanged((user) => {
+                if (user) {
+                    // alert(user.email)
+
+                    this.setState({useremail: user.email})
+
+                   // alert(this.state.useremail)
+
+                    //get the current private_sector
+
+                    db
+                        .collection("users")
+                        .where("email", "==", this.state.useremail)
+                        .get()
+                        .then(querySnapshot => {
+                            // alert(querySnapshot.size)
+
+                            if (querySnapshot.size >= 1) {
+                                //alert("heheh")
+                               // alert(querySnapshot.data())
+
+                               querySnapshot.forEach(doc=>{
+
+                                this.setState({
+                                    private_sector: doc.data().fullname
+                                })
+                               })
+
+
+                             //  alert(this.state.private_sector)
+                            } else {
+                                alert(0)
+                            }
+
+                        })
+                        .catch(error => {
+                            alert(error)
+                        })
+                } else {
+                    alert(0)
+                    // this.jumpToLoginPage()
+                }
+            });
+
     }
 
     checkPatientExixt = () => {}
@@ -76,7 +135,7 @@ export default class AddPatient extends Component < Props > {
                             location: this.state.location,
                             idnumber: this.state.idnumber,
                             phone: this.state.phone,
-                            private_sector: '',
+                            private_sector: this.state.private_sector,
                             date: ''
                         })
                             .then(() => {

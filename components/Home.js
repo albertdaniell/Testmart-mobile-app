@@ -16,6 +16,13 @@ var db = firebase.firestore()
 type Props = {};
 export default class Home extends Component < Props > {
 
+    constructor(props){
+        super(props)
+        console.ignoredYellowBox = [
+            'Setting a timer'
+            ];
+    }
+
     jumpToLoginPage = () => {
         //navigation.replace(Demo)
 

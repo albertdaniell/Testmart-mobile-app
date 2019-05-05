@@ -7,7 +7,15 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList,Image,ActivityIndicator} from 'react-native';
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    FlatList,
+    Image,
+    ActivityIndicator
+} from 'react-native';
 import {NavigationActions} from 'react-navigation';
 import {
     Container,
@@ -44,16 +52,74 @@ export default class MainPage2 extends Component < Props > {
 
     constructor(props) {
         super(props)
+        console.ignoredYellowBox = [
+            'Setting a timer'
+            ];
+            
 
         this.state = {
             patients: [],
-            isLoading:true
+            isLoading: true,
+            useremail: '',
+            private_sector:'',
         }
     }
 
-    componentDidMount() {
+    getCurrentUser = () => {
+        firebase
+            .auth()
+            .onAuthStateChanged((user) => {
+                if (user) {
+                    // alert(user.email)
 
+                    this.setState({useremail: user.email})
+
+                   // alert(this.state.useremail)
+
+                    //get the current private_sector
+
+                    db
+                        .collection("users")
+                        .where("email", "==", this.state.useremail)
+                        .get()
+                        .then(querySnapshot => {
+                            // alert(querySnapshot.size)
+
+                            if (querySnapshot.size >= 1) {
+                                //alert("heheh")
+                               // alert(querySnapshot.data())
+
+                               querySnapshot.forEach(doc=>{
+
+                                this.setState({
+                                    private_sector: doc.data().fullname
+                                })
+                               })
+
+
+                              // alert(this.state.private_sector)
+                            } else {
+                              //  alert(0)
+                            }
+
+                        })
+                        .catch(error => {
+                            alert(error)
+                        })
+                } else {
+                   // alert(0)
+                    // this.jumpToLoginPage()
+                }
+            });
+
+    }
+
+    componentDidMount() {
+        this.getCurrentUser()
+       setTimeout(()=>{
         this.getAllPatients()
+       },2000)
+
     }
 
     func = () => {
@@ -66,9 +132,11 @@ export default class MainPage2 extends Component < Props > {
 
         var ref = db.collection("patients")
 
-        getPatientsRef = ref
+        getPatientsRef = ref.where("private_sector","==",this.state.private_sector)
             .get()
             .then(querySnapshot => {
+
+                //alert(querySnapshot.size)
 
                 querySnapshot.forEach(doc => {
 
@@ -86,10 +154,9 @@ export default class MainPage2 extends Component < Props > {
 
                     })
 
-                    //alert("heheh")
-                    //    alert(0)
+                    //alert("heheh")    alert(0)
 
-                    this.setState({patients, isLoading:false})
+                    this.setState({patients, isLoading: false})
 
                 })
 
@@ -97,7 +164,7 @@ export default class MainPage2 extends Component < Props > {
             .catch(error => {})
     }
 
-    pull=()=>{
+    pull = () => {
         this.getAllPatients()
     }
     render() {
@@ -122,39 +189,40 @@ export default class MainPage2 extends Component < Props > {
                 {/* {
                    this.state.isLoading?
                <View style={{flex:1,justifyContent:'center',alignItems:'center',heigh:'100%'}}>
-              
+
                    <ActivityIndicator size="large" color="#0000ff" />
                    </View>
                    :null
-              
-              
+
+
             } */}
 
-
                 <FlatList
-                onRefresh={this.pull}
-                refreshing={this.state.isLoading}
+                    onRefresh={this.pull}
+                    refreshing={this.state.isLoading}
                     data={this.state.patients}
                     renderItem={({item}) => <ListItem avatar>
                     <Left>
-                    <Image style={{width:50,height:40}} source={require('../android/app/src/main/assets/images/patient.png')}></Image>
-
+                        <Image
+                            style={{
+                            width: 50,
+                            height: 40
+                        }}
+                            source={require('../android/app/src/main/assets/images/patient.png')}></Image>
                     </Left>
                     <Body>
                         <TouchableOpacity >
                             <Text
                                 style={{
                                 marginBottom: 5,
-                                padding:2
+                                padding: 2
                             }}>{item.fullname}</Text>
                         </TouchableOpacity>
                     </Body>
                     <Right>
                         <Icon name="arrow-forward"/>
                     </Right>
-                </ListItem>}
-               
-                />
+                </ListItem>}/>
 
             </View>
         );
