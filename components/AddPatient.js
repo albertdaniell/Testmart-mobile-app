@@ -17,7 +17,8 @@ import {
     Item,
     Input,
     Picker,
-    Icon
+    Icon,
+    YellowBox
 } from 'native-base';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import firebase from './Firebase'
@@ -29,9 +30,8 @@ export default class AddPatient extends Component < Props > {
 
     constructor(props) {
         super(props);
-        console.ignoredYellowBox = [
-            'Setting a timer'
-            ];
+        
+
         this.state = {
             gender: undefined,
             age: '',

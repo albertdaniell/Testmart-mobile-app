@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View,YellowBox} from 'react-native';
 import {NavigationActions} from 'react-navigation';
 import firebase from './Firebase'
 
@@ -18,9 +18,8 @@ export default class Home extends Component < Props > {
 
     constructor(props){
         super(props)
-        console.ignoredYellowBox = [
-            'Setting a timer'
-            ];
+        YellowBox.ignoreWarnings(['Setting a timer']);
+
     }
 
     jumpToLoginPage = () => {
@@ -33,6 +32,8 @@ export default class Home extends Component < Props > {
                 .reset([NavigationActions.navigate({routeName: 'Login'})], 0)
 
         }, 1000)
+
+        
     }
 
 getCurrentUser=()=>{

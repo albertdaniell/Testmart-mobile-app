@@ -16,6 +16,7 @@ import MainPage from './components/MainPage'
 import MainPage2 from './components/MainPage2'
 import Patients from './components/Patients'
 import AddPatient from './components/AddPatient'
+import ViewPatient from './components/ViewPatient'
 
 const TabNavigator = createBottomTabNavigator({
     MainPage: {
@@ -62,6 +63,12 @@ const AppNavigator = createStackNavigator({
         screen: AddPatient,
         navigationOptions: {
             title: 'Add Patient'
+        }
+    },
+    ViewPatient: {
+        screen: ViewPatient,
+        navigationOptions: {
+            title: 'View Patient'
         }
     }
 

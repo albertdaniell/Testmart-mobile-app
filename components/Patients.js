@@ -14,7 +14,8 @@ import {
     View,
     FlatList,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    YellowBox
 } from 'react-native';
 import {NavigationActions} from 'react-navigation';
 import {
@@ -52,9 +53,8 @@ export default class MainPage2 extends Component < Props > {
 
     constructor(props) {
         super(props)
-        console.ignoredYellowBox = [
-            'Setting a timer'
-            ];
+        YellowBox.ignoreWarnings(['Setting a timer']);
+
             
 
         this.state = {
@@ -211,12 +211,16 @@ export default class MainPage2 extends Component < Props > {
                             source={require('../android/app/src/main/assets/images/patient.png')}></Image>
                     </Left>
                     <Body>
-                        <TouchableOpacity >
+                        <TouchableOpacity 
+                        onPress={()=>this.props.navigation.navigate('ViewPatient',{
+                            pid:item.key
+                        })}
+                        >
                             <Text
                                 style={{
                                 marginBottom: 5,
                                 padding: 2
-                            }}>{item.fullname}</Text>
+                            }}>{item.fullname} </Text>
                         </TouchableOpacity>
                     </Body>
                     <Right>
